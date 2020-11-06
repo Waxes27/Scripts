@@ -17,6 +17,7 @@ topics = {
 
 
 def config(username):
+    
     os.system(f'echo "---\neditor: code\nrepo_path: ~/problems\nnavigator_url: "https://navigator.wethinkcode.co.za"\nusername: {username}@student.wethinkcode.co.za\nreview_manager_url: "https://review-manager.wethinkcode.co.za"\nkeycloak_url: "https://keycloak.wethinkcode.co.za"" > ~/.config/wtc/config.yml')
     """
     ---
@@ -27,24 +28,14 @@ def config(username):
     review_manager_url: "https://review-manager.wethinkcode.co.za"
     keycloak_url: "https://keycloak.wethinkcode.co.za"
     """
-        
-    
-    
-    
+
+
+
 def install_selenium():
     value = subprocess.check_output("pip3 install selenium", shell=True)
     if b'Requirement already satisfied: selenium':
         print('Selenium already installed...\nImporting selenium...')
     import selenium
-
-
-def check_output_login():
-    try:
-        value = subprocess.check_output("wtc-lms login", shell=True)
-    except subprocess.CalledProcessError as e:
-        print("Authentication Failed! Please try again")
-        value = check_output_login()
-    return value
 
 
 def clear():
@@ -55,16 +46,48 @@ def register():
     os.system("""wtc-lms register""")
 
 
+def initializing():
+    clear()
+    username = get_username()
+    # install_selenium()
+    if os.path.exists(f"{os.environ['HOME']}/Downloads/wtc-lms"):
+        print(f"Hello {username}\n")
+
+
+        if b'Login successful' in check_output_login(username):
+            clear()
+            print("SUCCESSFUL LOGIN\n")
+            register()
+    return username
+
+
+def check_output_login(username):
+    try:
+        value = subprocess.check_output("wtc-lms login", shell=True)
+    except subprocess.CalledProcessError as e:
+        print("Authentication Failed! Please try again")
+        verification = input(f' >   {username}\n\n Is this you?\n If this ({username}) is you press ENTER\n Else enter a new username\n---> ')
+        if len(verification) == 0: # User pressed ENTER
+            value = check_output_login(username)
+        else:
+            username = verification
+            username = verify_user(username)
+            
+            value = check_output_login(username)
+    return value
+
+
 def verify_user(username):
     os.system('wtc-lms config')
     #subprocess.check_output('wtc-lms config', shell=True)
     if username not in subprocess.getoutput('wtc-lms config')[190:]:
         print('changing config file...')
         time.sleep(1)
-        janet()
+        # janet()
         if username not in subprocess.getoutput('wtc-lms config')[190:]:
-            print("Invalid user\n")
-            username = get_username()
+            print("User not found\n\n Added new user")
+            config(username)
+            # username = get_username()
             
     return username
 
@@ -77,20 +100,6 @@ def get_username():
     clear()
     username = verify_user(username)
     
-    return username
-
-
-def initializing():
-    username = get_username()
-    # install_selenium()
-    if os.path.exists(f"{os.environ['HOME']}/Downloads/wtc-lms"):
-        print(f"Hello {username}\n")
-
-
-        if b'Login successful' in check_output_login():
-            clear()
-            print("SUCCESSFUL LOGIN\n")
-            register()
     return username
 
 
@@ -116,10 +125,6 @@ def pwd():
 
 def get_command_():
     return input(f' > : ')
-
-
-def janet():
-    os.system('mv ~/.config/wtc/config.yml ~/.config/wtc/config.ym0; mv ~/.config/wtc/config.ym ~/.config/wtc/config.yml; mv ~/.config/wtc/config.ym0 ~/.config/wtc/config.ym')
 
 
 def fundamentals(command,module):
@@ -150,8 +155,8 @@ def mobile(command,module):
         mobile = module.split()[-1]
         print(f'Mobile applications uuid {mobile}')
         return mobile
-    
-    
+
+
 def distributed(command,module):
 
     if command in module:
@@ -191,17 +196,8 @@ def lms_modules_topics(command):
             return uuid.strip('()')
 
 
-
-# def terminal():
-#     print("Welcome to terminal functionality...Feel asfree as the terminal")
-#     while True:
-#         cmd = str(input()
-#         os.system(str(input("")))
-    
-    
-    
 def main():
-
+    os.system('clear')
     username = initializing()
     clear()
     print('Welcome to the interface...\n')
@@ -240,8 +236,11 @@ def main():
 
 
 
-config('username')
-# main()
+
+main()
+# check_output_login('ndumasi')
+# initializing()
+# verify_user('qwer')
 # help_()
 # terminal()
 # print(lms_modules_topics('object'))
