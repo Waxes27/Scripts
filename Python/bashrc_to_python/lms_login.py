@@ -9,26 +9,30 @@ lms_commands = ['Topics','Problems','Reviews']
 f_flags = ['fundamentals', 'object orientation', 'web application', 'Mobile Applications', 'Distributed Systems']
 p_flags = ['Hangman','Pyramid','Outline','Mastermind','Toy robot','Recursion','Word processing','Accounting App','Fix the bugs']
 
-
 topics = {
-    'The Basics': ['Hangman 1'],
-    'Making Decisions' : []
+    ('hangman 1') : 'The Basics',
+    ('hangman 2') : 'Making Decisions',
+    ('pyramid') : 'Repeating Instructions',
+    ('hangman 3') : 'Repeating Instructions',
+    ('outline') : 'Structuring Data',
+    ('mastermind 1') : 'Structuring Data',
+    ('toy robot 1') : 'Procedures',
+    ('mastermind 2') : 'Procedures',
+    ('mastermind 3') : 'Simple Compute',#
+    ('recursion') : 'Calling Functions',
+    ('toy robot 2') : 'Calling Functions',
+    ('word processing') : 'Processing Collections',
+    ('toy robot 3') : 'Processing Collections',
+    ('accounting app') : 'Modules & Packages',
+    ('toy robot 4') : 'Modules & Packages',
+    ('toy robot 5') : 'Modules & Packages',
+    ('fix the bugs') : "Don't Panic",
+    ('code clinic booking system') : 'Group Project',
 }
-
 
 def config(username):
     
     os.system(f'echo "---\neditor: code\nrepo_path: ~/problems\nnavigator_url: "https://navigator.wethinkcode.co.za"\nusername: {username}@student.wethinkcode.co.za\nreview_manager_url: "https://review-manager.wethinkcode.co.za"\nkeycloak_url: "https://keycloak.wethinkcode.co.za"" > ~/.config/wtc/config.yml')
-    """
-    ---
-    editor: code
-    repo_path: ~/problems
-    navigator_url: "https://navigator.wethinkcode.co.za"
-    username: ndumasi@student.wethinkcode.co.za
-    review_manager_url: "https://review-manager.wethinkcode.co.za"
-    keycloak_url: "https://keycloak.wethinkcode.co.za"
-    """
-
 
 
 def install_selenium():
@@ -58,6 +62,7 @@ def initializing():
             clear()
             print("SUCCESSFUL LOGIN\n")
             register()
+    clear()
     return username
 
 
@@ -67,6 +72,7 @@ def check_output_login(username):
     except subprocess.CalledProcessError as e:
         print("Authentication Failed! Please try again")
         verification = input(f' >   {username}\n\n Is this you?\n If this ({username}) is you press ENTER\n Else enter a new username\n---> ')
+        clear()
         if len(verification) == 0: # User pressed ENTER
             value = check_output_login(username)
         else:
@@ -78,14 +84,14 @@ def check_output_login(username):
 
 
 def verify_user(username):
-    os.system('wtc-lms config')
+    # os.system('wtc-lms config')
     #subprocess.check_output('wtc-lms config', shell=True)
     if username not in subprocess.getoutput('wtc-lms config')[190:]:
         print('changing config file...')
         time.sleep(1)
         # janet()
         if username not in subprocess.getoutput('wtc-lms config')[190:]:
-            print("User not found\n\n Added new user")
+            print("User not found\n\n --->  Added new user")
             config(username)
             # username = get_username()
             
@@ -174,12 +180,12 @@ def lms_modules_topics(command):
     # return i
     for module in modules:
         module = module.lower()
-        if 'fundamentals' in command and 'fundamentals' in module:
+        if 'fun' in command and 'fun' in module:
             uuid = fundamentals(command,module)
             return uuid.strip('()')
 
 
-        if 'object' in command and 'object' in module :
+        if 'obj' in command and 'obj' in module :
             uuid = object_(command,module)
             return uuid.strip('()')
         
@@ -187,34 +193,94 @@ def lms_modules_topics(command):
             uuid = web(command,module)
             return uuid.strip('()')
 
-        if 'mobile' in command and 'mobile' in module:
+        if 'mob' in command and 'mob' in module:
             uuid = mobile(command,module)
             return uuid.strip('()')
 
-        if 'distr' in command and 'distri' in module:
+        if 'dist' in command and 'dist' in module:
             uuid = distributed(command,module)
             return uuid.strip('()')
 
 
-def main():
-    os.system('clear')
-    username = initializing()
-    clear()
-    print('Welcome to the interface...\n')
-    time.sleep(1)
-    
-    
-    
-    fun_topic = input('Which TOPIC are you working on...: ')
-    problem = input('What PROBLEM are you working on...: ')
-    
+def topics_uuid_modules(fun_topic):
     for i in f_flags:
         if fun_topic.lower() in i:
             uuid = lms_modules_topics(fun_topic)
-            os.system(f"wtc-lms topics {uuid}")
-            # subprocess.getoutput(f"wtc-lms topics {uuid}")
+    return uuid
+
+
+def list_of_problems():
+    list_ = []
+    for k,v in topics.items():
+        try:
+            k.split()
+            print(f'>> {k}')
+            list_.append(k)
+        except AttributeError:
+            list_.append(k[0])
+            list_.append(k[1])
+            print(f'>> {k[0]}')
+            print(f'>> {k[1]}')
+    return list_
+
+
+def user_input():
+    print('Here are a list of topics in LMS\n')
+    for i in f_flags:
+        print(f' >> {i}')
+
+
+    fun_topic = input('\nWhich TOPIC are you working on...: ("back if undesired Module")')
+    topic = topics_uuid_modules(fun_topic)
+
+
+    print('\nHere are a list of problems available\n')
+    if fun_topic.lower().startswith('fun'):
+        list_of_problems()
+
+
+    problem = input('\nWhat PROBLEM are you working on...: ')
+    return topic, problem
+
+
+def topics_uuid(uuid):
+    for i in uuid.splitlines():
+        if '(' in i:
+            return i.split()[-1].strip('()')
+
+
+def problem_handler(module_uuid, problem):
+
+    value = subprocess.getoutput(f'wtc-lms topics {module_uuid}')
+    
+    topics_index = value.find(topics[problem])
+    uuid = value[topics_index:topics_index+250]
+
+    uuid = topics_uuid(uuid)
+
+    print(".....Resolving your problem.....\n")
+    
+    value = subprocess.getoutput(f'wtc-lms problems {uuid}')[300:]
+    for i in value.splitlines():
+        if len(i.split()) > 2:
+            print(i)
+
+
+    
+    return 'still need to get problem uuid'.upper()
+
+
+def main():
+
+    username = initializing()
+
+    print('Welcome to the Interface...\n')
+    time.sleep(1)
+    
+    topic, problem = user_input()
+    print(problem_handler(topic, problem.lower()))
+    
     while True:
-        #print(f' > {pwd()}')
 
 
 
@@ -235,14 +301,12 @@ def main():
 
 
 
-
-
 main()
-# check_output_login('ndumasi')
-# initializing()
-# verify_user('qwer')
-# help_()
-# terminal()
-# print(lms_modules_topics('object'))
-# get_username()
-# print(topics['learning with python'])
+
+# for k,v in topics.items():
+#     print(k.upper())
+
+#     (problem_handler("505079ba-4393-47ff-a956-330555b09f00", k.lower()))
+#     clear()
+    
+# (problem_handler("505079ba-4393-47ff-a956-330555b09f00", 'mastermind 3'.lower()))
