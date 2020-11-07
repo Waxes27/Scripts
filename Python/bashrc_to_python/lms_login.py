@@ -2,33 +2,12 @@ import os
 import sys
 import time
 import subprocess
+from topic_fundamentals import topics as topics
+import globals_
+import help_c
 
 
-list_of_commands = ['help', 'off', 'terminal (in dev)']
-lms_commands = ['Topics','Problems','Reviews']
-f_flags = ['fundamentals', 'object orientation', 'web application', 'Mobile Applications', 'Distributed Systems']
-p_flags = ['Hangman','Pyramid','Outline','Mastermind','Toy robot','Recursion','Word processing','Accounting App','Fix the bugs']
 
-topics = {
-    ('hangman 1') : 'The Basics',
-    ('hangman 2') : 'Making Decisions',
-    ('pyramid') : 'Repeating Instructions',
-    ('hangman 3') : 'Repeating Instructions',
-    ('outline') : 'Structuring Data',
-    ('mastermind 1') : 'Structuring Data',
-    ('toy robot 1') : 'Procedures',
-    ('mastermind 2') : 'Procedures',
-    ('mastermind 3') : 'Simple Compute',#
-    ('recursion') : 'Calling Functions',
-    ('toy robot 2') : 'Calling Functions',
-    ('word processing') : 'Processing Collections',
-    ('toy robot 3') : 'Processing Collections',
-    ('accounting app') : 'Modules & Packages',
-    ('toy robot 4') : 'Modules & Packages',
-    ('toy robot 5') : 'Modules & Packages',
-    ('fix the bugs') : "Don't Panic",
-    ('code clinic booking system') : 'Group Project',
-}
 
 def config(username):
     
@@ -87,9 +66,9 @@ def failed_authentication(username):
     if len(verification) == 0: # User pressed ENTER
         value = check_output_login(username)
     else:
-        print("username = verification here")
-        username = verification
-        username = verify_user(username)
+        # username = verification
+
+        username = verify_user(verification)
         
         value = check_output_login(username)
     return value
@@ -117,13 +96,17 @@ def verify_user(username):
             print(f"User not found\n\n --->  Added new user\n\n Welcome {username}\n")
             config(username)
             # username = get_username()
-            
+
+
     return username
 
 
 def get_username():
     try:
         username = input("Username: ").lower()
+        while len(username) == 0:
+            clear()
+            username = get_username()
     except KeyboardInterrupt as k:
         clear()
         username = get_username()
@@ -136,24 +119,8 @@ def get_username():
     return username
 
 
-def help_():
-    print("""Here is what is available under LMS:\n""")
-    for i in lms_commands:
-        print(f' > {i.upper()}')
-    print()
-    
-    print("Here are interface commands:\n")
-    commands()
 
 
-def commands():
-    for i in list_of_commands:
-        print(f' > {i.upper()}')
-    print()
-
-
-def pwd():
-    return os.system('pwd')
 
 
 def get_command_(username):
@@ -230,10 +197,10 @@ def lms_modules_topics(command):
 
 
 def topics_uuid_modules(fun_topic):
-    for i in f_flags:
+    for i in globals_.p_flags:
         if fun_topic.lower() in i:
-            uuid = lms_modules_topics(fun_topic)
-    return uuid
+            return lms_modules_topics(fun_topic)
+    
 
 
 def list_of_problems():
@@ -251,22 +218,31 @@ def list_of_problems():
     return list_
 
 
+def get_topics():
+    fun_topic = input('\nWhich TOPIC are you working on...:')
+    clear()
+    topic = topics_uuid_modules(fun_topic)
+    return fun_topic,topic
+
+
+def get_problem():
+    problem = input('\nWhat PROBLEM are you working on...: ')
+    clear()
+    return problem
+
 def user_input():
     print('Here are a list of topics in LMS\n')
-    for i in f_flags:
+    for i in globals_.f_flags:
         print(f' >> {i}')
-
-
-    fun_topic = input('\nWhich TOPIC are you working on...:')
-    topic = topics_uuid_modules(fun_topic)
+    fun_topic, topic = get_topics()
 
 
     print('\nHere are a list of problems available\n')
     if fun_topic.lower().startswith('fun'):
         list_of_problems()
 
+    problem = get_problem()
 
-    problem = input('\nWhat PROBLEM are you working on...: ')
     return topic, problem
 
 
@@ -277,85 +253,97 @@ def topics_uuid(uuid):
 
 
 def problem_handler(module_uuid, problem):
-
-    list_of_problems = []
+    list_of_problems_ = []
 
     value = subprocess.getoutput(f'wtc-lms topics {module_uuid}')
+    try:
+        topics_index = value.find(topics[problem])
+        uuid = value[topics_index:topics_index+250]
+        uuid = topics_uuid(uuid)
+        print(".....Resolving your problem.....\n")
     
-    topics_index = value.find(topics[problem])
-    uuid = value[topics_index:topics_index+250]
+        value = subprocess.getoutput(f'wtc-lms problems {uuid}')[300:]
+        for i in value.splitlines():
+            if len(i.split()) > 2:
+                list_of_problems_.append(i)
+                # print(i)
+    except KeyError:
+        try:
+            print("Invalid Problems Selected\n\n    << Please select from the available below >>")
+            list_of_problems()
+            problem = get_problem()
+            problem_handler(module_uuid, problem.lower())
+        except KeyboardInterrupt:
+            print("Invalid Problems Selected\n\n    << Please select from the available below >>")
+            list_of_problems()
+            problem = get_problem()
+            problem_handler(module_uuid, problem.lower())
 
-    uuid = topics_uuid(uuid)
-
-    print(".....Resolving your problem.....\n")
     
-    value = subprocess.getoutput(f'wtc-lms problems {uuid}')[300:]
-    for i in value.splitlines():
-        if len(i.split()) > 2:
-            list_of_problems.append(i)
-            # print(i)
 
 
-    print(list_of_problems)
+
+
+    print(list_of_problems_)
     return 'still need to get problem uuid'.upper()
 
 
+def interface(username):
+
+    try:
+        command = get_command_(username)
+        print('topic' in command)
+    except KeyboardInterrupt:
+        clear()
+        return interface(username)
+
+    if command.lower() in globals_.list_of_commands or command.lower() in globals_.p_flags:
+        if 'help' in command.lower():
+            help_c.help_()
+            return True
+        elif command.lower() == 'off':
+            return False
+        elif 'problems' in command.lower():
+            clear()
+            print("Here are the available topics")
+            for k,v in topics.items():
+                print(k)
+            print()
+            return True
+        
+
+    else:
+        print(f"Command '{command}' does not exist")
+        return True
+
+
+
 def main():
+
+    engine = True
     try:
         username = initializing()
     except:
         KeyboardInterrupt
+    clear()
 
     print('Welcome to the Interface...\n')
     time.sleep(1)
-    
-    try:
-        topic, problem = user_input()
-        print(problem_handler(topic, problem.lower()))
-    except:
-        KeyboardInterrupt
+    topic, problem = user_input()
+    print(problem_handler(topic, problem.lower()))
 
-    while True:
+    while engine:
+        engine = interface(username)
 
 
-        try:
-            command = get_command_(username)
-            if command.lower() in list_of_commands or command.lower() in f_flags:
-                if 'help' in command.lower():
-                    help_()
-                elif command.lower() == 'off':
-                    break
-                
-
-            else:
-                print(f"Command '{command}' does not exist")
-        except:
-            KeyboardInterrupt
     clear()
-    print(f"Enjoy your day {username}")
-    time.sleep(2)
+    print(f"Enjoy your day {username}\n\n")
+    time.sleep(1.25)
 
 
 
 
-main()
-# def test():
-#     try:
-#         clear()
-#         input("qwer:\n")
-#     except:
-#         KeyboardInterrupt
-#         test()
-#         # input("No CTRL + C")
-
-# test()
-
-# subprocess.signal.siginterrupt(1,True)
-
-# for k,v in topics.items():
-#     print(k.upper())
-
-# (problem_handler("505079ba-4393-47ff-a956-330555b09f00", k.lower()))
-#     clear()
-    
-# (problem_handler("505079ba-4393-47ff-a956-330555b09f00", 'mastermind 3'.lower()))
+# main()
+while 1:
+    if interface('ndumasi') == False:
+        break
