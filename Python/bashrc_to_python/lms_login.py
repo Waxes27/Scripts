@@ -54,44 +54,67 @@ def initializing():
     clear()
     username = get_username()
     # install_selenium()
-    if os.path.exists(f"{os.environ['HOME']}/Downloads/wtc-lms"):
+    if os.path.exists(f"{os.environ['HOME']}/Downloads/wtc-lms") or os.path.exists(f"{os.environ['HOME']}/bin/wtc-lms") or os.path.exists(f"/bin/wtc-lms"):
         print(f"Hello {username}\n")
 
 
         if b'Login successful' in check_output_login(username):
             clear()
             print("SUCCESSFUL LOGIN\n")
-            register()
+            print("Do not interrupt this process...\n\n")
+            try:
+                register()
+            except KeyboardInterrupt:
+                print("Interrupt found... RESTARTING PROCESS\n")
+                register()
+    else:
+        print("...Please install LMS...")
     clear()
+    # print("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")
     return username
+
+
+
+def failed_authentication(username):
+    # print("Authentication Failed! Please try again")
+
+    try:
+        verification = input(f'\n  >>>   {username}\n\n Is this you?\n\n >> If this ({username}) is you press ENTER\n\n >>> Otherwise enter a new username\n---> ')
+    except KeyboardInterrupt:
+        clear()
+        value = failed_authentication(username)
+
+    if len(verification) == 0: # User pressed ENTER
+        value = check_output_login(username)
+    else:
+        print("username = verification here")
+        username = verification
+        username = verify_user(username)
+        
+        value = check_output_login(username)
+    return value
 
 
 def check_output_login(username):
     try:
         value = subprocess.check_output("wtc-lms login", shell=True)
     except subprocess.CalledProcessError as e:
-        print("Authentication Failed! Please try again")
-        verification = input(f' >   {username}\n\n Is this you?\n If this ({username}) is you press ENTER\n Else enter a new username\n---> ')
         clear()
-        if len(verification) == 0: # User pressed ENTER
-            value = check_output_login(username)
-        else:
-            username = verification
-            username = verify_user(username)
-            
-            value = check_output_login(username)
+        value = failed_authentication(username)
+        
     return value
 
 
 def verify_user(username):
     # os.system('wtc-lms config')
     #subprocess.check_output('wtc-lms config', shell=True)
+    clear()
     if username not in subprocess.getoutput('wtc-lms config')[190:]:
         print('changing config file...')
         time.sleep(1)
         # janet()
         if username not in subprocess.getoutput('wtc-lms config')[190:]:
-            print("User not found\n\n --->  Added new user")
+            print(f"User not found\n\n --->  Added new user\n\n Welcome {username}\n")
             config(username)
             # username = get_username()
             
@@ -99,8 +122,12 @@ def verify_user(username):
 
 
 def get_username():
-    username = input("Username: ").lower()
-    
+    try:
+        username = input("Username: ").lower()
+    except KeyboardInterrupt as k:
+        clear()
+        username = get_username()
+        
     # print(subprocess.getoutput('wtc-lms config')[190:].find(username))
     
     clear()
@@ -129,8 +156,8 @@ def pwd():
     return os.system('pwd')
 
 
-def get_command_():
-    return input(f' > : ')
+def get_command_(username):
+    return input(f' > {username} : ')
 
 
 def fundamentals(command,module):
@@ -230,7 +257,7 @@ def user_input():
         print(f' >> {i}')
 
 
-    fun_topic = input('\nWhich TOPIC are you working on...: ("back if undesired Module")')
+    fun_topic = input('\nWhich TOPIC are you working on...:')
     topic = topics_uuid_modules(fun_topic)
 
 
@@ -251,6 +278,8 @@ def topics_uuid(uuid):
 
 def problem_handler(module_uuid, problem):
 
+    list_of_problems = []
+
     value = subprocess.getoutput(f'wtc-lms topics {module_uuid}')
     
     topics_index = value.find(topics[problem])
@@ -263,37 +292,45 @@ def problem_handler(module_uuid, problem):
     value = subprocess.getoutput(f'wtc-lms problems {uuid}')[300:]
     for i in value.splitlines():
         if len(i.split()) > 2:
-            print(i)
+            list_of_problems.append(i)
+            # print(i)
 
 
-    
+    print(list_of_problems)
     return 'still need to get problem uuid'.upper()
 
 
 def main():
-
-    username = initializing()
+    try:
+        username = initializing()
+    except:
+        KeyboardInterrupt
 
     print('Welcome to the Interface...\n')
     time.sleep(1)
     
-    topic, problem = user_input()
-    print(problem_handler(topic, problem.lower()))
-    
+    try:
+        topic, problem = user_input()
+        print(problem_handler(topic, problem.lower()))
+    except:
+        KeyboardInterrupt
+
     while True:
 
 
+        try:
+            command = get_command_(username)
+            if command.lower() in list_of_commands or command.lower() in f_flags:
+                if 'help' in command.lower():
+                    help_()
+                elif command.lower() == 'off':
+                    break
+                
 
-        command = get_command_()
-        if command.lower() in list_of_commands or command.lower() in f_flags:
-            if 'help' in command.lower():
-                help_()
-            elif command.lower() == 'off':
-                break
-            
-
-        else:
-            print(f"Command '{command}' does not exist")
+            else:
+                print(f"Command '{command}' does not exist")
+        except:
+            KeyboardInterrupt
     clear()
     print(f"Enjoy your day {username}")
     time.sleep(2)
@@ -302,11 +339,23 @@ def main():
 
 
 main()
+# def test():
+#     try:
+#         clear()
+#         input("qwer:\n")
+#     except:
+#         KeyboardInterrupt
+#         test()
+#         # input("No CTRL + C")
+
+# test()
+
+# subprocess.signal.siginterrupt(1,True)
 
 # for k,v in topics.items():
 #     print(k.upper())
 
-#     (problem_handler("505079ba-4393-47ff-a956-330555b09f00", k.lower()))
+# (problem_handler("505079ba-4393-47ff-a956-330555b09f00", k.lower()))
 #     clear()
     
 # (problem_handler("505079ba-4393-47ff-a956-330555b09f00", 'mastermind 3'.lower()))
