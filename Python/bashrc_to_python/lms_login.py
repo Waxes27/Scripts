@@ -6,17 +6,17 @@ from topic_fundamentals import topics as topics
 import globals_
 import help_c
 
-if subprocess.getoutput(('echo $SHELL')) != "/bin/bash":
-    os.system('bash')
-    clear()
+# if subprocess.getoutput(('echo $SHELL')) != "/bin/bash":
+#     os.system('bash')
+#     clear()
 
-if not os.path.exists(f"{os.environ['HOME']}/Scripts"):
-    a = subprocess.getoutput('git clone https://github.com/Waxes27/Scripts.git')
-    print(a)
-bashrc = open(f"{os.environ['HOME']}/.bashrc", 'r+')
-print()
-if not "python3 ~/Scripts/Python/bashrc_to_python/lms_login.py\n" in bashrc.read():
-    bashrc.write("python3 ~/Scripts/Python/bashrc_to_python/lms_login.py\n")
+# if not os.path.exists(f"{os.environ['HOME']}/Scripts"):
+#     a = subprocess.getoutput('git clone https://github.com/Waxes27/Scripts.git')
+#     print(a)
+# bashrc = open(f"{os.environ['HOME']}/.bashrc", 'r+')
+# print()
+# if not "python3 ~/Scripts/Python/bashrc_to_python/lms_login.py\n" in bashrc.read():
+#     bashrc.write("python3 ~/Scripts/Python/bashrc_to_python/lms_login.py\n")
 
 
 
@@ -123,21 +123,22 @@ def verify_user(username):
 
 
 def get_username():
-    try:
-        old_user = input(f"Is your username {history_file.readline()} \n'y/n': ")
-        if old_user.lower() != 'y':
-            clear()
-        else:
-            history_file.write(f"{username}\n")
-            return verify_user(i)
-    except:
-        pass
+    # try:
+    #     old_user = input(f"Is your username {history_file.read()} \n'y/n': ")
+    #     if old_user.lower() != 'y':
+    #         clear()
+    #     else:
+    #         history_file.write(f"{username}\n")
+    #         return verify_user(i)
+    # except KeyboardInterrupt:
+    #     pass
     try:
         username = input("Username: ").lower()
         while len(username) == 0:
             clear()
             username = get_username()
     except KeyboardInterrupt as k:
+        
         clear()
         username = get_username()
 
@@ -372,7 +373,8 @@ def main():
 
 
 # print(get_username())
-# main()
+main()
+print(len(history_file.read()))
 # open_file()
 # while 1:
 #     if interface('ndumasi') == False:
