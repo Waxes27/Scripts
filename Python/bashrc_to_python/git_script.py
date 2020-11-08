@@ -6,7 +6,9 @@ import os
 def git_ask(command):
     git_files = {}
     os.system('clear;ls')
+    
     number_of_files = input("\nHow many files do you wish to git add: ")
+
     for i in range(int(number_of_files)):
         name_of_file = input("\nName of file? ")
         commit_message = input(f"\n\nEnter commit message for --> {name_of_file}\n --> Here: ")
