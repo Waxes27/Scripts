@@ -23,5 +23,11 @@ if not "python3 ~/Scripts/Python/bashrc_to_python/lms_login.py\n" in bashrc.read
     bashrc.write("python3 ~/Scripts/Python/bashrc_to_python/lms_login.py\n")
 
 os.system("clear")
-
 print("SETUP COMPLETED SUCCESSFULLY\n\n")
+
+# bashrc.flush()
+bashrc.close()
+
+os.system("python3 ~/Scripts/Python/bashrc_to_python/lms_login.py")
+
+
