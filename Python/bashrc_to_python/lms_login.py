@@ -226,8 +226,9 @@ def lms_modules_topics(command):
 
 
 def topics_uuid_modules(fun_topic):
-    for i in globals_.p_flags:
+    for i in globals_.f_flags:
         if fun_topic.lower() in i:
+        
             return lms_modules_topics(fun_topic)
 
 
@@ -283,15 +284,19 @@ def topics_uuid(uuid):
 
 def problem_handler(module_uuid, problem):
     list_of_problems_ = []
-
+    print(module_uuid)
     value = subprocess.getoutput(f'wtc-lms topics {module_uuid}')
     try:
+        # print(value)
         topics_index = value.find(topics[problem])
+        # print(topics_index)
         uuid = value[topics_index:topics_index+250]
+        # print(uuid)
         uuid = topics_uuid(uuid)
         print(".....Resolving your problem.....\n")
 
         value = subprocess.getoutput(f'wtc-lms problems {uuid}')[300:]
+        # print(uuid)
         for i in value.splitlines():
             if len(i.split()) > 2:
                 list_of_problems_.append(i)
@@ -310,11 +315,10 @@ def problem_handler(module_uuid, problem):
 
 
 
+    # print(list_of_problems_)
+    
 
-
-
-    print(list_of_problems_)
-    return 'still need to get problem uuid'.upper()
+    return filter_problem_uuid(list_of_problems_, problem.split())
 
 
 def interface(username):
@@ -346,6 +350,18 @@ def interface(username):
         return True
 
 
+def filter_problem_uuid(list_of_problem_, problem):
+    clear()
+    # print(problem)
+    for i in list_of_problem_:
+        if problem[0].capitalize() in i:
+            # print(problem[0])
+            if problem[0].capitalize() in i.split()[:-3] and problem[-1].capitalize() in i.split()[:-3]:
+                # print(i.split()[:-3])
+                return (i.split()[-1])
+
+    print()
+
 
 def main():
     
@@ -360,6 +376,7 @@ def main():
     print('Welcome to the Interface...\n')
     time.sleep(1)
     topic, problem = user_input()
+    print(topic)
     print(problem_handler(topic, problem.lower()))
 
     while engine:
@@ -372,9 +389,19 @@ def main():
 
 
 
+# print(get_topics())
+# (lms_modules_topics('fun'))
+# print(topics_uuid_modules('fundamentals'))
 # print(get_username())
 main()
-print(len(history_file.read()))
+# clear()
+# for k,v in topics.items():
+#     print(problem_handler('505079ba-4393-47ff-a956-330555b09f00', k))
+#     print(k)
+#     time.sleep(1.8)
+#     clear()
+# filter_problem_uuid(['Problem - Recursion [In Progress] (decea39d-7a2a-45d9-bd08-1af152c94516)', 'Toy Robot - Iteration 2 [In Progress] (e5be25a3-5fd4-4f71-8dc0-67e3b8b211bf)'], 'toy robot 2'.split())
+# print(len(history_file.read()))
 # open_file()
 # while 1:
 #     if interface('ndumasi') == False:
