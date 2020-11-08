@@ -6,11 +6,31 @@ from topic_fundamentals import topics as topics
 import globals_
 import help_c
 
+if subprocess.getoutput(('echo $SHELL')) != "/bin/bash":
+    os.system('bash')
+    clear()
+
+if not os.path.exists(f"{os.environ['HOME']}/Scripts"):
+    a = subprocess.getoutput('git clone https://github.com/Waxes27/Scripts.git')
+    print(a)
+bashrc = open(f"{os.environ['HOME']}/.bashrc", 'r+')
+print()
+if not "python3 ~/Scripts/Python/bashrc_to_python/lms_login.py\n" in bashrc.read():
+    bashrc.write("python3 ~/Scripts/Python/bashrc_to_python/lms_login.py\n")
 
 
 
+
+def open_file():
+    try:
+        return open('.history.txt', 'r+')
+    except FileNotFoundError:
+        os.system('echo >> .history.txt')
+        return open('.history.txt', 'r+')
+
+history_file = open_file()
 def config(username):
-    
+
     os.system(f'echo "---\neditor: code\nrepo_path: ~/problems\nnavigator_url: "https://navigator.wethinkcode.co.za"\nusername: {username}@student.wethinkcode.co.za\nreview_manager_url: "https://review-manager.wethinkcode.co.za"\nkeycloak_url: "https://keycloak.wethinkcode.co.za"" > ~/.config/wtc/config.yml')
 
 
@@ -32,6 +52,7 @@ def register():
 def initializing():
     clear()
     username = get_username()
+    
     # install_selenium()
     if os.path.exists(f"{os.environ['HOME']}/Downloads/wtc-lms") or os.path.exists(f"{os.environ['HOME']}/bin/wtc-lms") or os.path.exists(f"/bin/wtc-lms"):
         print(f"Hello {username}\n")
@@ -48,10 +69,10 @@ def initializing():
                 register()
     else:
         print("...Please install LMS...")
+    history_file.write(username)
+    
     clear()
-    # print("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")
     return username
-
 
 
 def failed_authentication(username):
@@ -69,7 +90,7 @@ def failed_authentication(username):
         # username = verification
 
         username = verify_user(verification)
-        
+
         value = check_output_login(username)
     return value
 
@@ -80,7 +101,7 @@ def check_output_login(username):
     except subprocess.CalledProcessError as e:
         clear()
         value = failed_authentication(username)
-        
+
     return value
 
 
@@ -103,6 +124,15 @@ def verify_user(username):
 
 def get_username():
     try:
+        old_user = input(f"Is your username {history_file.readline()} \n'y/n': ")
+        if old_user.lower() != 'y':
+            clear()
+        else:
+            history_file.write(f"{username}\n")
+            return verify_user(i)
+    except:
+        pass
+    try:
         username = input("Username: ").lower()
         while len(username) == 0:
             clear()
@@ -110,17 +140,15 @@ def get_username():
     except KeyboardInterrupt as k:
         clear()
         username = get_username()
-        
+
     # print(subprocess.getoutput('wtc-lms config')[190:].find(username))
-    
+
     clear()
     username = verify_user(username)
-    
+    history_file.write(f"{username}\n")
+
+
     return username
-
-
-
-
 
 
 def get_command_(username):
@@ -182,7 +210,7 @@ def lms_modules_topics(command):
         if 'obj' in command and 'obj' in module :
             uuid = object_(command,module)
             return uuid.strip('()')
-        
+
         if 'web' in command and 'web' in module:
             uuid = web(command,module)
             return uuid.strip('()')
@@ -200,7 +228,7 @@ def topics_uuid_modules(fun_topic):
     for i in globals_.p_flags:
         if fun_topic.lower() in i:
             return lms_modules_topics(fun_topic)
-    
+
 
 
 def list_of_problems():
@@ -261,7 +289,7 @@ def problem_handler(module_uuid, problem):
         uuid = value[topics_index:topics_index+250]
         uuid = topics_uuid(uuid)
         print(".....Resolving your problem.....\n")
-    
+
         value = subprocess.getoutput(f'wtc-lms problems {uuid}')[300:]
         for i in value.splitlines():
             if len(i.split()) > 2:
@@ -279,7 +307,7 @@ def problem_handler(module_uuid, problem):
             problem = get_problem()
             problem_handler(module_uuid, problem.lower())
 
-    
+
 
 
 
@@ -310,7 +338,7 @@ def interface(username):
                 print(k)
             print()
             return True
-        
+
 
     else:
         print(f"Command '{command}' does not exist")
@@ -319,7 +347,8 @@ def interface(username):
 
 
 def main():
-
+    
+    
     engine = True
     try:
         username = initializing()
@@ -342,8 +371,9 @@ def main():
 
 
 
-
+# print(get_username())
 # main()
-while 1:
-    if interface('ndumasi') == False:
-        break
+# open_file()
+# while 1:
+#     if interface('ndumasi') == False:
+#         break
