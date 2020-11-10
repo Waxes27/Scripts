@@ -31,7 +31,20 @@ def open_file():
 history_file = open_file()
 def config(username):
 
-    os.system(f'echo "---\neditor: code\nrepo_path: ~/problems\nnavigator_url: "https://navigator.wethinkcode.co.za"\nusername: {username}@student.wethinkcode.co.za\nreview_manager_url: "https://review-manager.wethinkcode.co.za"\nkeycloak_url: "https://keycloak.wethinkcode.co.za"" > ~/.config/wtc/config.yml')
+    os.system(f"""echo "---
+    editor: code
+    repo_path: ~/problems
+    navigator_url: "https://navigator.wethinkcode.co.za"
+    username: {username}@student.wethinkcode.co.za
+    review_manager_url: "https://review-manager.wethinkcode.co.za"
+    keycloak_url: "https://keycloak.wethinkcode.co.za"" > ~/.config/wtc/config.yml""")
+# (f"""echo ---
+# editor: code
+# repo_path: ~/problems
+# navigator_url: "https://navigator.wethinkcode.co.za"
+# username: {username}@student.wethinkcode.co.za
+# review_manager_url: "https://review-manager.wethinkcode.co.za"
+# keycloak_url: "https://keycloak.wethinkcode.co.za"" > ~/.config/wtc/config.yml""")
 
 
 def install_selenium():
@@ -394,6 +407,7 @@ def main():
 # print(topics_uuid_modules('fundamentals'))
 # print(get_username())
 main()
+# config('ndumasi')
 # clear()
 # for k,v in topics.items():
 #     print(problem_handler('505079ba-4393-47ff-a956-330555b09f00', k))
