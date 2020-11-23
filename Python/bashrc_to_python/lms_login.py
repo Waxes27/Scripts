@@ -6,20 +6,6 @@ from topic_fundamentals import topics as topics
 import globals_
 import help_c
 
-# if subprocess.getoutput(('echo $SHELL')) != "/bin/bash":
-#     os.system('bash')
-#     clear()
-
-# if not os.path.exists(f"{os.environ['HOME']}/Scripts"):
-#     a = subprocess.getoutput('git clone https://github.com/Waxes27/Scripts.git')
-#     print(a)
-# bashrc = open(f"{os.environ['HOME']}/.bashrc", 'r+')
-# print()
-# if not "python3 ~/Scripts/Python/bashrc_to_python/lms_login.py\n" in bashrc.read():
-#     bashrc.write("python3 ~/Scripts/Python/bashrc_to_python/lms_login.py\n")
-
-
-
 
 def open_file():
     try:
@@ -38,13 +24,6 @@ def config(username):
     username: {username}@student.wethinkcode.co.za
     review_manager_url: "https://review-manager.wethinkcode.co.za"
     keycloak_url: "https://keycloak.wethinkcode.co.za"" > ~/.config/wtc/config.yml""")
-# (f"""echo ---
-# editor: code
-# repo_path: ~/problems
-# navigator_url: "https://navigator.wethinkcode.co.za"
-# username: {username}@student.wethinkcode.co.za
-# review_manager_url: "https://review-manager.wethinkcode.co.za"
-# keycloak_url: "https://keycloak.wethinkcode.co.za"" > ~/.config/wtc/config.yml""")
 
 
 def install_selenium():
@@ -68,6 +47,7 @@ def initializing():
     
     # install_selenium()
     if os.path.exists(f"{os.environ['HOME']}/Downloads/wtc-lms") or os.path.exists(f"{os.environ['HOME']}/bin/wtc-lms") or os.path.exists(f"/bin/wtc-lms"):
+        clear()
         print(f"Hello {username}\n")
 
 
@@ -97,7 +77,7 @@ def failed_authentication(username):
         clear()
         value = failed_authentication(username)
 
-    if len(verification) == 0: # User pressed ENTER
+    if len(verification) == 0:          # User pressed ENTER
         value = check_output_login(username)
     else:
         # username = verification
@@ -136,15 +116,7 @@ def verify_user(username):
 
 
 def get_username():
-    # try:
-    #     old_user = input(f"Is your username {history_file.read()} \n'y/n': ")
-    #     if old_user.lower() != 'y':
-    #         clear()
-    #     else:
-    #         history_file.write(f"{username}\n")
-    #         return verify_user(i)
-    # except KeyboardInterrupt:
-    #     pass
+
     try:
         username = input("Username: ").lower()
         while len(username) == 0:
@@ -297,23 +269,22 @@ def topics_uuid(uuid):
 
 def problem_handler(module_uuid, problem):
     list_of_problems_ = []
-    print(module_uuid)
     value = subprocess.getoutput(f'wtc-lms topics {module_uuid}')
     try:
         # print(value)
         topics_index = value.find(topics[problem])
-        # print(topics_index)
+
         uuid = value[topics_index:topics_index+250]
-        # print(uuid)
+
         uuid = topics_uuid(uuid)
         print(".....Resolving your problem.....\n")
 
         value = subprocess.getoutput(f'wtc-lms problems {uuid}')[300:]
-        # print(uuid)
+
         for i in value.splitlines():
             if len(i.split()) > 2:
                 list_of_problems_.append(i)
-                # print(i)
+
     except KeyError:
         try:
             print("Invalid Problems Selected\n\n    << Please select from the available below >>")
@@ -385,11 +356,12 @@ def main():
     except:
         KeyboardInterrupt
     clear()
+    # username = 'ndumasi'
 
     print('Welcome to the Interface...\n')
     time.sleep(1)
     topic, problem = user_input()
-    print(topic)
+
     print(problem_handler(topic, problem.lower()))
 
     while engine:
@@ -402,21 +374,4 @@ def main():
 
 
 
-# print(get_topics())
-# (lms_modules_topics('fun'))
-# print(topics_uuid_modules('fundamentals'))
-# print(get_username())
-main()
-# config('ndumasi')
-# clear()
-# for k,v in topics.items():
-#     print(problem_handler('505079ba-4393-47ff-a956-330555b09f00', k))
-#     print(k)
-#     time.sleep(1.8)
-#     clear()
-# filter_problem_uuid(['Problem - Recursion [In Progress] (decea39d-7a2a-45d9-bd08-1af152c94516)', 'Toy Robot - Iteration 2 [In Progress] (e5be25a3-5fd4-4f71-8dc0-67e3b8b211bf)'], 'toy robot 2'.split())
-# print(len(history_file.read()))
-# open_file()
-# while 1:
-#     if interface('ndumasi') == False:
-#         break
+# main()

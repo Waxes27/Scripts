@@ -29,5 +29,3 @@ print("SETUP COMPLETED SUCCESSFULLY\n\n")
 bashrc.close()
 
 os.system("python3 ~/Scripts/Python/bashrc_to_python/lms_login.py")
-
-
