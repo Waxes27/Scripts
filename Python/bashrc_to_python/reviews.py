@@ -17,6 +17,20 @@ def clear():
     os.system('clear')
 
 
+def list_reviews(topic):
+    if topic.split()[-1] == 'list':
+        value = subprocess.getoutput(f"wtc-lms reviews | grep 'Invited'")
+        print(value)
+    else:
+        value = subprocess.getoutput(f"wtc-lms reviews | grep '{topic.split()[-1].capitalize()}' | grep 'Invited'")
+        print(value)
+
+
+def history_reviews():
+    value = subprocess.getoutput(f"wtc-lms reviews | grep 'Graded'")
+    print(value)
+
+
 def get_topic():
     return input("What topic do you want to review..? ").capitalize()
 
@@ -32,8 +46,22 @@ def closing():
     print(f"{value} Reviews Done!!")
 
 
+def slacked(username,exercise,grade,comment):
+    slack_file = open(f"{os.environ['HOME']}/problems/.slacked.txt", 'a+')
+    slackee = f'{username}---> {exercise}--->{grade}---->{comment}'
+    slack_file.write(f'{slackee}\n')
+    slack_file.close()
+
+
 def main():
     clear()
+    if 'history' in sys.argv:
+        history_reviews()
+        return
+    if 'list' in sys.argv:
+        list_reviews(sys.argv[-1])
+        return
+    
     if 'reviews.py' not in sys.argv[-1]:
         topic = sys.argv[-1].capitalize()
     else:
@@ -60,30 +88,36 @@ def main():
     try:
         repo_path = subprocess.getoutput(f'wtc-lms accept {review_uuid}').split()[-1]
         print(f"Review Accepted and repo is here ---> {repo_path}")
-    except UnboundLocalError:
-        closing()
-        exit()
-    
+        print((repo_path.split('/')[-1].split('_')))
+        username = (repo_path.split('/')[-1].split('_')[0])
+        exercise = (repo_path.split('/')[-1].split('_')[2])
+        print(username)
+        print(exercise)
+    except UnboundLocalError:    
+        print(topic.split()[-1])
+
     grade = input('Grade: ')
     # while grade not in range(10) or not grade.isdigit():
     #     grade = input('Grade: ')
         
     comment = input("Comment: ")
+    slacked(username,exercise,grade,comment)
     
     os.system(f"wtc-lms add_comment {review_uuid} '{comment}'")
     os.system(f"wtc-lms grade_review {review_uuid} '{grade}'")
-    remove = input("remove repo...y/n?: ").lower()
+    remove = 'y'
+    # remove = input("remove repo...y/n?: ").lower()
     # while remove != 'n' or remove != 'y':
     #     clear()
     #     remove = input("remove repo...y/n?: ").lower()
     
     if remove == 'y':
         os.system(f'rm -rf {repo_path}')
-    else:
-        pass
     closing()
 
 
 
-
-main()
+if __name__ == "__main__":
+    main()
+    # list_reviews('r list')
+    # slacked()
