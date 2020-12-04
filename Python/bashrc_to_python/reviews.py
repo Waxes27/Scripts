@@ -60,6 +60,7 @@ def get_help():
  > HELP     : Brings up this help menu
  > HISTORY  : Brings up the previously graded reviews
  > lIST     : Brings up a list of available reviews
+ > SYNC     : Brings up previously accepted reviews
 
 Examples:
     'r word'         - Begins the review of a Word Processing
