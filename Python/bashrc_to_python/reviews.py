@@ -183,13 +183,13 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
-    pass
+    main()
+    # pass
     # list_reviews('r list')
     # slacked()
 
-grade = ''
-while not grade.isdigit():
-    grade = input('Grade: ')
-while int(grade) not in range(11):
-    grade = input('Grade: ')
+# grade = ''
+# while not grade.isdigit():
+#     grade = input('Grade: ')
+# while int(grade) not in range(11):
+#     grade = input('Grade: ')
