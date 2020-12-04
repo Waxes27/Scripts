@@ -44,6 +44,8 @@ def closing():
     clear()
     value = subprocess.getoutput('wtc-lms reviews | grep "Graded" | wc -l')
     print(f"{value} Reviews Done!!")
+    value = subprocess.getoutput('wtc-lms reviews | grep "Assigned" | wc -l')
+    print(f"{value} Reviews pending completion")
 
 
 def slacked(username,exercise,grade,comment):
@@ -52,9 +54,74 @@ def slacked(username,exercise,grade,comment):
     slack_file.write(f'{slackee}\n')
     slack_file.close()
 
+def get_help():
+    clear()
+    return """
+ > HELP     : Brings up this help menu
+ > HISTORY  : Brings up the previously graded reviews
+ > lIST     : Brings up a list of available reviews
+
+Examples:
+    'r word'         - Begins the review of a Word Processing
+    'r list word'    - Brings up a list of all Word Processing to be reviewed
+    'r sync'         - Brings forth a pending review to grade and process
+
+"""
+def grading():
+    grade = ''
+    while not grade.isdigit():
+        grade = input('Grade (0 -> 10): ')
+    while int(grade) not in range(10):
+        grade = input('Grade (0 - 10): ')
+
+    return grade
+
+def sync():
+    value = subprocess.getoutput('wtc-lms reviews | grep "Assigned"')
+    if len(value) == 0:
+        v = input('Have you logged in (y/n)... : ').lower()
+        if v == 'y':
+            print('\nThen there are no available reviews to bring forth...')
+            return
+        else:
+            os.system('wtc-lms login;clear')
+            os.system('wtc-lms register')
+            clear()
+            sync()
+            return
+
+    sync_uuid = (value.splitlines()[0].split()[-2].strip('()'))
+    print(sync_uuid)
+    value = subprocess.getoutput(f'wtc-lms sync_review {sync_uuid}')
+    if 'delete it' in value:
+        os.system(f"rm -rf{value.split('at')[1].split('.')[0]}")
+        value = subprocess.getoutput(f'wtc-lms sync_review {sync_uuid}')
+    clear()
+    username = value.split()[-1].split('/')[-1].split('_')[0].strip('0123456789')
+    exercise = value.split('submission')[1]
+    print(f'Review synced into problems directory\n\nUsername: {username}\nExercise : {exercise}')
+
+    grade = grading()
+    comment = input("Comment: ")
+    slacked(username,exercise,grade,comment)
+    finalizing(grade, comment, sync_uuid)
+    closing()
+
+
+
+def finalizing(grade, comment, review_uuid):
+    os.system(f"wtc-lms add_comment {review_uuid} '{comment}'")
+    os.system(f"wtc-lms grade_review {review_uuid} '{grade}'")
 
 def main():
     clear()
+    if 'sync' in sys.argv:
+        sync()
+        return
+        
+    if 'help' in sys.argv:
+        print(get_help())
+        return
     if 'history' in sys.argv:
         history_reviews()
         return
@@ -84,6 +151,7 @@ def main():
         review_uuid = value[0].split()[-2].strip('()')
     except IndexError:
         print("Topic/Iteration Complete or is not found!!")
+        return
 
     try:
         repo_path = subprocess.getoutput(f'wtc-lms accept {review_uuid}').split()[-1]
@@ -96,20 +164,16 @@ def main():
     except UnboundLocalError:    
         print(topic.split()[-1])
 
-    grade = input('Grade: ')
-    # while grade not in range(10) or not grade.isdigit():
-    #     grade = input('Grade: ')
-        
+    grade = grading()
+
+
     comment = input("Comment: ")
     slacked(username,exercise,grade,comment)
     
-    os.system(f"wtc-lms add_comment {review_uuid} '{comment}'")
-    os.system(f"wtc-lms grade_review {review_uuid} '{grade}'")
+    finalizing(grade, comment, review_uuid)
+    
     remove = 'y'
-    # remove = input("remove repo...y/n?: ").lower()
-    # while remove != 'n' or remove != 'y':
-    #     clear()
-    #     remove = input("remove repo...y/n?: ").lower()
+
     
     if remove == 'y':
         os.system(f'rm -rf {repo_path}')
@@ -119,5 +183,12 @@ def main():
 
 if __name__ == "__main__":
     main()
+
     # list_reviews('r list')
     # slacked()
+
+# grade = ''
+# while not grade.isdigit():
+#     grade = input('Grade: ')
+# while int(grade) not in range(10):
+#     grade = input('Grade: ')
