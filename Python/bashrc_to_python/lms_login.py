@@ -356,22 +356,22 @@ def main():
     except:
         KeyboardInterrupt
     clear()
-    # username = 'ndumasi'
+    # # username = 'ndumasi'
 
-    print('Welcome to the Interface...\n')
-    time.sleep(1)
-    topic, problem = user_input()
+    # print('Welcome to the Interface...\n')
+    # time.sleep(1)
+    # topic, problem = user_input()
 
-    print(problem_handler(topic, problem.lower()))
+    # print(problem_handler(topic, problem.lower()))
 
-    while engine:
-        engine = interface(username)
-
-
-    clear()
-    print(f"Enjoy your day {username}\n\n")
-    time.sleep(1.25)
+    # while engine:
+    #     engine = interface(username)
 
 
+    # clear()
+    # print(f"Enjoy your day {username}\n\n")
+    # time.sleep(1.25)
 
-# main()
+
+
+main()
