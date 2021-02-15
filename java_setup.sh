@@ -52,5 +52,5 @@ mv ideaIC-2020.3.2.tar.gz ~/IDEA
 echo "To Use IntelliJ run command 'idea'"
 fi
 mvn -version
-echo "alias idea='/bin/bash ~/IDEA/idea-IC-203.7148.57/bin/idea.sh'" >> .bashrc 
+echo "alias idea='/bin/bash ~/IDEA/idea-IC-203.7148.57/bin/idea.sh'" >> ~/.bashrc 
 exit
