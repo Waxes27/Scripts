@@ -18,7 +18,7 @@ echo 'Installing IntelliJ...'; sleep 2
 
 wget https://download.jetbrains.com/idea/ideaIC-2020.3.2.tar.gz
 echo 'Unzipping file...'; sleep 2
-mkdir IDEA
+mkdir ~/IDEA
 tar -xvf ideaIC-2020.3.2.tar.gz -C ~/IDEA
 fi
 
@@ -49,6 +49,8 @@ IntelliJ Stored in ~/IDEA
 
 "
 mv ideaIC-2020.3.2.tar.gz ~/IDEA
+echo "To Use IntelliJ run command 'idea'"
 fi
 mvn -version
+echo "alias idea='/bin/bash ~/IDEA/idea-IC-203.7148.57/bin/idea.sh'" >> .bashrc 
 exit
