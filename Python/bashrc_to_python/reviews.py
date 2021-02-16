@@ -2,7 +2,7 @@ import os
 import sys
 import subprocess
 import time
-import lms_login
+# import lms_login
 
 
 bashrc = open(f"{os.environ['HOME']}/.bashrc", 'a+')
@@ -115,6 +115,10 @@ def finalizing(grade, comment, review_uuid):
     os.system(f"wtc-lms grade_review {review_uuid} '{grade}'")
 
 def main():
+    if 'login' in sys.argv:
+        import lms_login
+        return
+    
     clear()
     if 'sync' in sys.argv:
         sync()
