@@ -14,6 +14,4 @@ for _ in input().lower().split():
 command = ls[0]
 
 
-for key in fun:
-    if command == key:
-        fun[key](2)
+print(fun['hello'](2))

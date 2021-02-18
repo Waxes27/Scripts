@@ -339,9 +339,7 @@ def filter_problem_uuid(list_of_problem_, problem):
     # print(problem)
     for i in list_of_problem_:
         if problem[0].capitalize() in i:
-            # print(problem[0])
             if problem[0].capitalize() in i.split()[:-3] and problem[-1].capitalize() in i.split()[:-3]:
-                # print(i.split()[:-3])
                 return (i.split()[-1])
 
     print()
@@ -356,22 +354,6 @@ def main():
     except:
         KeyboardInterrupt
     clear()
-    # # username = 'ndumasi'
-
-    # print('Welcome to the Interface...\n')
-    # time.sleep(1)
-    # topic, problem = user_input()
-
-    # print(problem_handler(topic, problem.lower()))
-
-    # while engine:
-    #     engine = interface(username)
-
-
-    # clear()
-    # print(f"Enjoy your day {username}\n\n")
-    # time.sleep(1.25)
-
 
 
 main()
