@@ -2,7 +2,8 @@ import os
 import sys
 import subprocess
 import time
-import lms_login
+import requests
+# import lms_login
 
 
 bashrc = open(f"{os.environ['HOME']}/.bashrc", 'a+')
@@ -157,6 +158,7 @@ def main():
     try:
         repo_path = subprocess.getoutput(f'wtc-lms accept {review_uuid}').split()[-1]
         print(f"Review Accepted and repo is here ---> {repo_path}")
+        os.system(f"gedit {repo_path}")
         print((repo_path.split('/')[-1].split('_')))
         username = (repo_path.split('/')[-1].split('_')[0])
         exercise = (repo_path.split('/')[-1].split('_')[2])
@@ -193,3 +195,4 @@ if __name__ == "__main__":
 #     grade = input('Grade: ')
 # while int(grade) not in range(11):
 #     grade = input('Grade: ')
+    # guidelines = requests.get('')
