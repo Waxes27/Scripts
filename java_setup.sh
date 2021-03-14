@@ -17,7 +17,7 @@ read -p "Install IntelliJ IDE (y/n): " prompt_intel
 if [[ $prompt_intel == 'y' ]]; then
 echo 'Installing IntelliJ...'; sleep 2
 
-wget https://download.jetbrains.com/idea/ideaIC-2020.3.2.tar.gz
+wget https://download.jetbrains.com/idea/ideaIC-211.6432.7.tar.gz
 echo 'Unzipping file...'; sleep 2
 mkdir ~/IDEA
 tar -xvf ideaIC-2020.3.2.tar.gz -C ~/IDEA
