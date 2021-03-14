@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "alias idea='/bin/bash ~/IDEA/idea-IC-203.7148.57/bin/idea.sh'" >> ~/.bashrc 
+echo "alias idea='/bin/bash ~/IDEA/ideaIC-211.6432.7/bin/idea.sh'" >> ~/.bashrc 
 
 # echo $prompt_intel
 name=`whoami`
@@ -17,10 +17,10 @@ read -p "Install IntelliJ IDE (y/n): " prompt_intel
 if [[ $prompt_intel == 'y' ]]; then
 echo 'Installing IntelliJ...'; sleep 2
 
-wget https://download.jetbrains.com/idea/ideaIC-2020.3.2.tar.gz
+wget https://download.jetbrains.com/idea/ideaIC-211.6432.7.tar.gz
 echo 'Unzipping file...'; sleep 2
 mkdir ~/IDEA
-tar -xvf ideaIC-2020.3.2.tar.gz -C ~/IDEA
+tar -xvf ideaIC-211.6432.7.tar.gz -C ~/IDEA
 fi
 
 sudo ./java_setup.sh
@@ -43,14 +43,14 @@ sudo echo 'export PATH=${M2_HOME}/bin:${PATH}' >> /etc/profile.d/maven/maven.sh
 sudo chmod +x /etc/profile.d/maven/maven.sh
 source /etc/profile.d/maven/maven.sh
 
-if [[ $prompt_intel == 'y' ]]; then
-echo "
+# if [[ $prompt_intel == 'y' ]]; then
+# echo "
 
-IntelliJ Stored in ~/IDEA
+# IntelliJ Stored in ~/IDEA
 
-"
-mv ideaIC-2020.3.2.tar.gz ~/IDEA
-echo "To Use IntelliJ run command 'idea'"
-fi
+# "
+# mv ideaIC-211.6432.7.tar.gz ~/IDEA
+# fi
 mvn -version
+echo "To Use IntelliJ run command 'idea'"
 exit
