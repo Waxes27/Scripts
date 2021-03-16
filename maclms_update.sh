@@ -1,15 +1,18 @@
-# source lms_update.sh
-clear
-# exit
+#!/bin/bash
+
 echo "Downloading LMS..."
 
-wget www.georgepauer.com/maclms/macos_wtc-lms
-mv macos_wtc-lms wtc-lms
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+brew install wget
+clear
+wget www.georgepauer.com/maclms/wtc-lms
+#clear
 
 chmod +x wtc-lms
-sudo mv wtc-lms /bin
+#sudo mv wtc-lms /bin/
+#clear
 
+echo "MAC WTC UPDATED..."
+echo "Please restart Terminal."
 
-echo "LMS UPDATED...\nPlease restart Terminal"
 sleep 2
-# exit
