@@ -5,11 +5,11 @@ echo "Downloading LMS..."
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 brew install wget
 clear
-wget www.georgepauer.com/maclms/wtc-lms
+wget www.georgepauer.com/maclms/macos_wtc-lms
 #clear
-
+mv macos_wtc-lms wtc-lms
 chmod +x wtc-lms
-#sudo mv wtc-lms /bin/
+sudo mv wtc-lms /bin/
 #clear
 
 echo "MAC WTC UPDATED..."
