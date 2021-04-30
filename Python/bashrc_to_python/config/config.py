@@ -2,7 +2,8 @@ import os
 import sys
 
 os.system("clear")
-print("Welcome to LMS Troubleshooting...\n\n\n")
+print("Welcome to LMS Troubleshooting...\n")
+
 
 
 def config(username):
@@ -19,8 +20,18 @@ keycloak_url: "https://keycloak.wethinkcode.co.za"
 
 
 
+def trouble(username):
+    print()
+    print("     Setting Git Global Config...")
+    os.system(f"git config --global user.name '{username}'; git config --global user.email '{username}@student.wethinkcode.co.za'")
+    print("     Git Global Config Set...\n")
+
+
+
 def main():
     username = input("What is your username: ")
     config(username)
+    trouble(username)
 
-main()
+    print("Done, other LMS issues relay to Waxes27...")
+    

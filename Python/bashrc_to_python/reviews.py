@@ -3,6 +3,7 @@ import re
 import os
 import sys
 import concurrent.futures
+import config.config as config
 
 problem_uuid = []
 problems = []
@@ -24,6 +25,7 @@ def get_help():
     wtcr list       -       lists reviews
     wtcr sync list  -       lists already synced reviews
     wtcr stats      -       brings up statistics
+    wtcr config     -       sets up a LMS config file
     
     
     """
@@ -234,6 +236,10 @@ def review_arg_sorter(topic, iteration):
     elif "list" in sys.argv[1:]:
         review = input("What do you want to see [ENTER for all]: ").lower()
         [print(i) for i in rlist(topic,review,iteration)]
+        exit()
+    
+    elif "config" in sys.argv:
+        config.main()
         exit()
 
 
