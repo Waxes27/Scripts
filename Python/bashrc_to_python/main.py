@@ -24,7 +24,6 @@ def helpCommand():
     """)
 
 def lms_output(command):
-    # print(command)
     return subprocess.getoutput(command)
 
 topics = re.findall(r"\D{3}-\D{3}.\w{6}.\w{8}-\w{4}-\w{4}-\w{4}-\w{12}",lms_output("wtc-lms modules"))
@@ -56,9 +55,9 @@ def main():
             problem_uuid.append(re.findall(r"\(\w.*\b\)",lms_output(_)))
 
     if 'history' in sys.argv:
-        print("His")
         lmsHistory()
-        exit
+    else:
+        helpCommand()    
 
 
 
