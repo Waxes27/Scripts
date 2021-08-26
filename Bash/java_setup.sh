@@ -1,5 +1,6 @@
 #!/bin/bash
-echo "alias idea='/bin/bash ~/IDEA/idea-IC-211.6432.7/bin/idea.sh'" >> ~/.bashrc 
+echo "alias idea='/bin/bash ~/IDEA/idea-IC-211.6432.7/bin/idea.sh'" >> ~/.bashrc
+echo "alias idea='/bin/bash ~/IDEA/idea-IC-211.6432.7/bin/idea.sh'" >> ~/.zshrc
 
 # echo $prompt_intel
 name=`whoami`
