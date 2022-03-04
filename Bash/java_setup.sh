@@ -18,7 +18,7 @@ echo 'Installing IntelliJ...'; sleep 2
 wget https://download.jetbrains.com/idea/$version
 echo 'Unzipping file...'; sleep 2
 mkdir ~/IDEA
-tar -xvf $name -C ~/IDEA
+tar -xvf $version -C ~/IDEA
 
 
 fi
