@@ -1,9 +1,13 @@
 #!/bin/bash
-echo "alias idea='/bin/bash ~/IDEA/idea-IC-211.6432.7/bin/idea.sh'" >> ~/.bashrc
-echo "alias idea='/bin/bash ~/IDEA/idea-IC-211.6432.7/bin/idea.sh'" >> ~/.zshrc
+name=`whoami`
+version='ideaIC-2021.3.2.tar.gz'
+name='ideaIC-2021.3.2'
+
+
+echo "alias idea='/bin/bash ~/IDEA/$name/bin/idea.sh'" >> ~/.bashrc
+echo "alias idea='/bin/bash ~/IDEA/$name/bin/idea.sh'" >> ~/.zshrc
 
 # echo $prompt_intel
-name=`whoami`
 # echo $name
 
 read -p "Install IntelliJ IDE (y/n): " prompt_intel
@@ -11,10 +15,10 @@ read -p "Install IntelliJ IDE (y/n): " prompt_intel
 if [[ $prompt_intel == 'y' ]]; then
 echo 'Installing IntelliJ...'; sleep 2
 
-wget https://download.jetbrains.com/idea/ideaIC-211.6432.7.tar.gz
+wget https://download.jetbrains.com/idea/$version
 echo 'Unzipping file...'; sleep 2
 mkdir ~/IDEA
-tar -xvf ideaIC-211.6432.7.tar.gz -C ~/IDEA
+tar -xvf $name -C ~/IDEA
 
 
 fi
