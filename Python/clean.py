@@ -4,17 +4,17 @@ import subprocess
 
 def download():
     print(subprocess.getoutput(f"""
-    sudo apt install curl wget gsettings -y
+    apt install curl wget gsettings-desktop-schemas -y
     wget https://assets.system76.com/wallpapers/unleash.png
-    sudo mv unleash.png {os.environ["HOME"]}/.config
+    mv unleash.png {os.environ["HOME"]}/.config
     """))
 
 
 def setup():
-    user = os.environ["USER"]
+    user = os.environ["HOME"]
     
     print(subprocess.getoutput(f"""
-    gsettings set org.gnome.desktop.background picture-uri file:////home/{user}/.config/unleash.png
+    gsettings set org.gnome.desktop.background picture-uri file:///{user}/.config/unleash.png
     rm -rf unleash*
     """))
 
