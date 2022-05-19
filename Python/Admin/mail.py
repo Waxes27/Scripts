@@ -1,4 +1,5 @@
 from __future__ import print_function
+import base64
 
 import os.path
 
@@ -44,9 +45,12 @@ def main():
         if not messages:
             print('No labels found.')
             return
+        
         for message in messages:
             txt = service.users().messages().get(userId='me', id=message['id']).execute()
+            
             for i in txt:
+                
                 payload = txt['payload']
                 headers = payload['headers']
                 for d in headers:
@@ -55,10 +59,26 @@ def main():
                     if d['name'] == 'From':
                         sender = d['value']
             if "@student" in sender:
-                print(sender)
-                exit()
+                print(txt['payload']['parts'])
+                print(txt)
                 
-            # exit()
+                if txt['payload']['filename']:
+                    if 'data' in txt['body']:
+                        data = txt['body']['data']
+                    else:
+                        att_id = txt['body']['attachmentId']
+                        att = service.users().messages().attachments().get(userId='me', messageId=message['id'],id=att_id).execute()
+                        data = att['data']
+                    file_data = base64.urlsafe_b64decode(data.encode('UTF-8'))
+                    path = txt['filename']
+                    print(path)
+
+                    with open(path, 'w') as f:
+                        f.write(file_data)
+                    print(sender)
+                    exit()
+                
+                
 
     except HttpError as error:
         # TODO(developer) - Handle errors from gmail API.
