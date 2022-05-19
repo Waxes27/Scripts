@@ -12,6 +12,14 @@ from googleapiclient.errors import HttpError
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
+def get_message(service,msgId):
+    txt = service.users().messages().get(userId='me', id=msgId).execute()
+    return txt
+
+def get_message_by_label(service,labelId):
+    txt = service.users().threads().list(userId='me', labelIds=labelId).execute()
+    return txt
+
 
 def main():
     """Shows basic usage of the Gmail API.
@@ -47,38 +55,48 @@ def main():
             return
         
         for message in messages:
-            txt = service.users().messages().get(userId='me', id=message['id']).execute()
+            txt = get_message(service,message['id'])
+            txt = get_message_by_label(service,"Label_561763887185572634")
             
-            for i in txt:
-                
+
+            for i in txt["threads"]:
+                try:
+                    txt = get_message(service,i['id'])
+                except:
+                    continue
+                # print(service.users().messages().attachments().get(userId='me', messageId=i['id'],id=part['body']['attachmentId']).execute())
+                print(i)
+                # exit()
                 payload = txt['payload']
                 headers = payload['headers']
+
                 for d in headers:
+                    # print(d)
                     if d['name'] == 'Subject':
                         subject = d['value']
                     if d['name'] == 'From':
                         sender = d['value']
-            if "@student" in sender:
-                print(txt['payload']['parts'])
-                print(txt)
-                
-                if txt['payload']['filename']:
-                    if 'data' in txt['body']:
-                        data = txt['body']['data']
-                    else:
-                        att_id = txt['body']['attachmentId']
-                        att = service.users().messages().attachments().get(userId='me', messageId=message['id'],id=att_id).execute()
-                        data = att['data']
-                    file_data = base64.urlsafe_b64decode(data.encode('UTF-8'))
-                    path = txt['filename']
-                    print(path)
+                # print(sender)
+                if "Label_561763887185572634" in txt['labelIds']:
 
-                    with open(path, 'w') as f:
-                        f.write(file_data)
-                    print(sender)
-                    exit()
-                
-                
+                    # if "student" in sender:
+                    parts = payload['parts']
+                    for part in parts:
+                        if part['filename']:
+                            file = service.users().messages().attachments().get(userId='me', messageId=message['id'],id=part['body']['attachmentId']).execute()['data']
+                            file_data = base64.urlsafe_b64decode(file.encode('UTF-8'))
+                            # print(part['filename'])
+                            if not os.path.exists(sender):
+                                os.mkdir(sender)
+                            path = sender+"/"+part['filename']
+                            # print(path)
+                            if ".eml" not in path:
+                                with open(path, 'wb') as f:
+                                    f.write(file_data)
+
+                            # exit()
+            
+
 
     except HttpError as error:
         # TODO(developer) - Handle errors from gmail API.
