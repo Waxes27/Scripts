@@ -1,5 +1,6 @@
 from __future__ import print_function
 import base64
+import filecmp
 
 import os.path
 
@@ -8,6 +9,8 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+import time
+
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
@@ -16,8 +19,8 @@ def get_message(service,msgId):
     txt = service.users().messages().get(userId='me', id=msgId).execute()
     return txt
 
-def get_message_by_label(service,labelId):
-    txt = service.users().threads().list(userId='me', labelIds=labelId).execute()
+def get_message_by_label(service,labelId,nextPage=""):
+    txt = service.users().threads().list(userId='me', labelIds=labelId, maxResults=200).execute()
     return txt
 
 
@@ -46,27 +49,34 @@ def main():
     try:
         # Call the Gmail API
         service = build('gmail', 'v1', credentials=creds)
-        results = service.users().messages().list(userId='me').execute()
-        # print(results)
+        results = service.users().messages().list(userId='me',maxResults=1000).execute()
         messages = results.get('messages', [])
 
         if not messages:
             print('No labels found.')
             return
-        
+        counter = 0
+
         for message in messages:
+
+            counter += 1
             txt = get_message(service,message['id'])
             txt = get_message_by_label(service,"Label_561763887185572634")
+            # print(txt)
+            # print(len(txt["threads"]))
+            # print(txt['nextPageToken'])
+        # exit()
             
 
             for i in txt["threads"]:
                 try:
                     txt = get_message(service,i['id'])
+                    # print(txt)
                 except:
                     continue
                 # print(service.users().messages().attachments().get(userId='me', messageId=i['id'],id=part['body']['attachmentId']).execute())
-                print(i)
-                # exit()
+                
+                
                 payload = txt['payload']
                 headers = payload['headers']
 
@@ -90,12 +100,37 @@ def main():
                                 os.mkdir(sender)
                             path = sender+"/"+part['filename']
                             # print(path)
-                            if ".eml" not in path:
-                                with open(path, 'wb') as f:
-                                    f.write(file_data)
+                            
+                            if not os.path.exists(path):
+                                if ".eml" not in path:
+                                    with open(path, 'wb') as f:
+                                        f.write(file_data)
+                                        print(f"written to: {path}")
+                            else:
+                                if ".eml" not in path:
 
-                            # exit()
-            
+                                    if not os.path.exists("tmp"):
+                                        os.mkdir("tmp")
+                                    os.mkdir("tmp/"+sender)
+
+                                    with open("tmp"+"/"+path, 'wb') as f:
+                                        f.write(file_data)
+
+                                        if filecmp.cmp(path,"tmp/"+path):
+                                            
+                                            print(filecmp.cmp(path,"tmp/"+path))
+                                            print(path)
+                                        elif ".eml" not in path:
+                                            # input(f"Check {path}")
+                                            # input("write")
+                                            path = path + str(time.time()) + ".pdf"
+                                            with open(path, 'wb') as f:
+                                                f.write(file_data)
+                                            print(f"overwritten to: {path}")
+                                # input("next")
+                                os.system("rm -rf tmp")
+                
+        
 
 
     except HttpError as error:
